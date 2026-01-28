@@ -87,6 +87,14 @@
             "link": "https://shop.m5stack.com/products/m5paper-esp32-development-kit-v1-1-960x540-4-7-eink-display-235-ppi?ref=Pirata",
             "family": "ESP32",
             "id": "m5stack-paper"
+        },
+        {
+            "display": false,
+            "name": "StickS3",
+            "description": "",
+            "link": "https://shop.m5stack.com/products/m5sticks3-esp32s3-mini-iot-dev-kit?ref=Pirata",
+            "family": "ESP32-S3",
+            "id": "m5stack-sticks3"
         }
     ],
     "Headless": [
