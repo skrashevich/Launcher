@@ -8,7 +8,7 @@
             "family": "ESP32-C6",
             "id": "arduino-nesso-n1"
         }
-    ]
+    ],
     "M5Stack": [
         {
             "display": true,
