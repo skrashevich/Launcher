@@ -1,4 +1,14 @@
 {
+    "Arduino": [
+        {
+            "display": false,
+            "name": "Arduino Nesso n1",
+            "description": "",
+            "link": "https://docs.arduino.cc/hardware/nesso-n1",
+            "family": "ESP32-C6",
+            "id": "arduino-nesso-n1"
+        }
+    ]
     "M5Stack": [
         {
             "display": true,
@@ -89,7 +99,7 @@
             "id": "m5stack-paper"
         },
         {
-            "display": false,
+            "display": true,
             "name": "StickS3",
             "description": "",
             "link": "https://shop.m5stack.com/products/m5sticks3-esp32s3-mini-iot-dev-kit?ref=Pirata",
