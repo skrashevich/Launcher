@@ -8,6 +8,10 @@
 
 #define M5_SERVER_PATH "https://m5burner-cdn.m5stack.com/firmware/"
 
+#ifndef LAUNCHER_API_HOST
+#define LAUNCHER_API_HOST "launcherhub.svk.su"
+#endif
+
 /***************************************************************************************
 ** Function name: wifiConnect
 ** Description:   Connects to wifiNetwork
@@ -253,7 +257,7 @@ bool GetJsonFromLauncherHub(uint8_t page, String order, bool star, String query)
 #ifdef OTA_EXTRA
     q += OTA_EXTRA;
 #endif
-    String serverUrl = "https://api.launcherhub.net/firmwares?category=" + String(OTA_TAG) + q;
+    String serverUrl = "https://" LAUNCHER_API_HOST "/firmwares?category=" + String(OTA_TAG) + q;
 
     if (getInfo(serverUrl, doc)) {
         total_firmware = doc["total"].as<int>();
@@ -268,7 +272,7 @@ bool GetJsonFromLauncherHub(uint8_t page, String order, bool star, String query)
 }
 JsonDocument getVersionInfo(String fid) {
     JsonDocument versions;
-    String serverUrl = "https://api.launcherhub.net/firmwares?fid=" + fid;
+    String serverUrl = "https://" LAUNCHER_API_HOST "/firmwares?fid=" + fid;
     if (!getInfo(serverUrl, versions)) {
         displayRedStripe("Version fetch Failed");
         vTaskDelay(1500 / portTICK_PERIOD_MS);
@@ -281,7 +285,7 @@ JsonDocument getVersionInfo(String fid) {
 ***************************************************************************************/
 void downloadFirmware(String fid, String file, String fileName, String folder) { // Adicionar "fid"
     if (!file.startsWith("https://")) file = M5_SERVER_PATH + file;
-    String fileAddr = "https://api.launcherhub.net/download?fid=" + fid + "&file=" + file;
+    String fileAddr = "https://" LAUNCHER_API_HOST "/download?fid=" + fid + "&file=" + file;
     if (fid == "") fileAddr = file;
     int tries = 0;
     fileName = replaceChars(fileName);
@@ -578,7 +582,7 @@ void installFirmware( // adicionar "fid"
     bool fat, uint32_t fat_offset[2], uint32_t fat_size[2]
 ) {
     if (!file.startsWith("https://")) file = M5_SERVER_PATH + file;
-    String fileAddr = "https://api.launcherhub.net/download?fid=" + fid + "&file=" + file;
+    String fileAddr = "https://" LAUNCHER_API_HOST "/download?fid=" + fid + "&file=" + file;
     if (fid == "") fileAddr = file;
 
     // Release RAM Memory from Json Objects
