@@ -1,0 +1,75 @@
+name: Deploy to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download release assets for website
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          download_release() {
+            local primary_tag="$1"
+            local fallback_tag="$2"
+            local target_dir="$3"
+
+            if gh release view "$primary_tag" >/dev/null 2>&1; then
+              gh release download "$primary_tag" --dir "$target_dir" --clobber
+            else
+              echo "Primary tag $primary_tag not found, falling back to $fallback_tag"
+              gh release download "$fallback_tag" --dir "$target_dir" --clobber
+            fi
+          }
+
+          rm -rf src/binsBeta src/binsRelease
+          mkdir -p src/binsBeta src/binsRelease
+
+          download_release beta beta src/binsBeta
+          download_release last last src/binsRelease
+
+          # find Beta -maxdepth 1 -type f -name '*.bin' -exec mv {} src/binsBeta \;
+          # find Release -maxdepth 1 -type f -name '*.bin' -exec mv {} src/binsRelease\;
+
+      - name: Build site
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './build'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
