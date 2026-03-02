@@ -202,7 +202,7 @@ bool getInfo(String serverUrl, JsonDocument &_doc) {
         resetTftDisplay();
         tft->drawRoundRect(5, 5, tftWidth - 10, tftHeight - 10, 5, FGCOLOR);
         tft->drawCentreString("Getting info from", tftWidth / 2, tftHeight / 3, 1);
-        tft->drawCentreString("LauncherHub", tftWidth / 2, tftHeight / 3 + FM * 9, 1);
+        tft->drawCentreString(launcher_api_host.c_str(), tftWidth / 2, tftHeight / 3 + FM * 9, 1);
         tft->display(false);
         tft->setCursor(18, tftHeight / 3 + FM * 9 * 2);
         const uint8_t maxAttempts = 5;
@@ -253,7 +253,7 @@ bool GetJsonFromLauncherHub(uint8_t page, String order, bool star, String query)
 #ifdef OTA_EXTRA
     q += OTA_EXTRA;
 #endif
-    String serverUrl = "https://api.launcherhub.net/firmwares?category=" + String(OTA_TAG) + q;
+    String serverUrl = "https://" + launcher_api_host + "/firmwares?category=" + String(OTA_TAG) + q;
 
     if (getInfo(serverUrl, doc)) {
         total_firmware = doc["total"].as<int>();
@@ -268,7 +268,7 @@ bool GetJsonFromLauncherHub(uint8_t page, String order, bool star, String query)
 }
 JsonDocument getVersionInfo(String fid) {
     JsonDocument versions;
-    String serverUrl = "https://api.launcherhub.net/firmwares?fid=" + fid;
+    String serverUrl = "https://" + launcher_api_host + "/firmwares?fid=" + fid;
     if (!getInfo(serverUrl, versions)) {
         displayRedStripe("Version fetch Failed");
         vTaskDelay(1500 / portTICK_PERIOD_MS);
@@ -281,7 +281,7 @@ JsonDocument getVersionInfo(String fid) {
 ***************************************************************************************/
 void downloadFirmware(String fid, String file, String fileName, String folder) { // Adicionar "fid"
     if (!file.startsWith("https://")) file = M5_SERVER_PATH + file;
-    String fileAddr = "https://api.launcherhub.net/download?fid=" + fid + "&file=" + file;
+    String fileAddr = "https://" + launcher_api_host + "/download?fid=" + fid + "&file=" + file;
     if (fid == "") fileAddr = file;
     int tries = 0;
     fileName = replaceChars(fileName);
@@ -578,7 +578,7 @@ void installFirmware( // adicionar "fid"
     bool fat, uint32_t fat_offset[2], uint32_t fat_size[2]
 ) {
     if (!file.startsWith("https://")) file = M5_SERVER_PATH + file;
-    String fileAddr = "https://api.launcherhub.net/download?fid=" + fid + "&file=" + file;
+    String fileAddr = "https://" + launcher_api_host + "/download?fid=" + fid + "&file=" + file;
     if (fid == "") fileAddr = file;
 
     // Release RAM Memory from Json Objects
