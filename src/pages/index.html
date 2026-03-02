@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Launcher firmware tools for M5Stack, LilyGO and ESP32 devices." />
+    <meta name="color-scheme" content="dark" />
+    <title>Launcher Project | Web Tools & Firmware Catalog</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+  </head>
+  <body class="page-home">
+    <header>
+      <div class="navbar">
+        <div class="brand">
+          <p class="brand__title"><span class="text-highlight--glow">Launcher</span> Project</p>
+          <p class="brand__subtitle">A GRUB like bootloader for ESP32</p>
+        </div>
+        <button class="navbar__toggle" type="button" aria-expanded="false" aria-controls="site-navigation" data-nav-toggle>
+          Menu
+        </button>
+        <nav class="navbar__menu" id="site-navigation" data-nav tabindex="-1">
+          <ul class="navbar__list">
+            <li><a class="navbar__link" href="#mission" data-scroll>Mission</a></li>
+            <li><a class="navbar__link" href="#tooling" data-scroll>Tools</a></li>
+            <li><a class="navbar__link" href="#support" data-scroll>Support</a></li>
+            <li><a class="navbar__link" href="#community" data-scroll>Community</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="hero hero--landing" id="mission" tabindex="-1">
+        <div class="hero__header">
+          <h1 class="hero__title">Deploy, manage and explore <span class="text-highlight--glow">Launcher</span> firmware with confidence.</h1>
+        </div>
+        <div class="hero__body">
+          <div class="hero__content">
+          <p class="hero__description">
+            <span class="text-highlight">Launcher</span> streamlines installation workflows for a growing catalog of ESP32-based devices including M5Stack, LilyGO and custom boards.
+            The project combines an accessible web flasher, firmware binaries and clear documentation so that makers and educators can ship ideas instantly.
+          </p>
+          <div class="hero__actions">
+            <a class="button button--primary" href="webflasher.html">Open Web Flasher</a>
+            <a class="button button--ghost" href="catalog.html">Browse firmware catalog</a>
+          </div>
+          </div>
+          <div class="hero__media">
+            <img src="assets/Launcher.gif" alt="Launcher interface preview" loading="lazy" decoding="async" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal-on-scroll" id="tooling" tabindex="-1">
+        <h2 class="section__heading">Tooling built for <span class="text-highlight">Launcher</span> deployments</h2>
+        <p class="section__lead">
+          Our GitHub Pages deployment ships a self-hosted copy of <strong>esp-web-tool v10.1.1</strong>, ensuring that flashing experiences remain consistent even without external CDNs.
+        </p>
+        <div class="grid grid--two">
+          <article class="card">
+            <h3 class="card__title">Trusted flashing experience</h3>
+            <p class="card__description">
+              Web powered installer tailored for Launcher firmware. Detect compatible boards, guide users through serial permissions, and ship releases in minutes.
+            </p>
+            <div class="card__actions">
+              <a class="button button--ghost" href="webflasher.html">Launch the Web Flasher</a>
+            </div>
+          </article>
+          <article class="card">
+            <h3 class="card__title">Curated firmware catalog</h3>
+            <p class="card__description">
+              Track stable and experimental builds, check board compatibility, and jump directly to the binaries you need. Everything is searchable from the catalog page.
+            </p>
+            <div class="card__actions">
+              <a class="button button--ghost" href="catalog.html">Visit the catalog</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section reveal-on-scroll" id="support" tabindex="-1">
+        <h2 class="section__heading">Support the <span class="text-highlight">Launcher</span> initiative</h2>
+        <p class="section__lead">
+          Launcher is maintained by volunteers. Your support keeps devices online, documentation accurate and the firmware catalog expanding with the latest builds.
+        </p>
+        <div class="donation-grid">
+          <div class="donation-card">
+            <strong>Buy Me a Coffee</strong>
+            <p>Help fuel late-night debugging sessions and roadmaps.</p>
+            <a href="https://buymeacoffee.com/bmorcelliz" class="button button--ghost">BuyMeACoffee</a>
+          </div>
+          <div class="donation-card">
+            <strong>GitHub Sponsors</strong>
+            <p>Join the supporter roster and unlock recurring sponsorship options.</p>
+            <a href="https://github.com/sponsors/bmorcelli" class="button button--ghost">GitHub Sponsors</a>
+          </div>
+          <div class="donation-card">
+            <strong>PayPal</strong>
+            <p>Send a one-time contribution via PayPal using <code>bmorcelli@gmail.com</code>.</p>
+            <a href="https://www.paypal.com/donate?business=bmorcelli@gmail.com" class="button button--ghost">PayPal</a>
+          </div>
+          <div class="donation-card">
+            <strong>Bitcoin</strong>
+            <p>Reach out for Bitcoin, and receive direct wallet details.</p>
+            <a href="mailto:bmorcelli@gmail.com" class="button button--ghost">Request BTC info</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal-on-scroll" id="community" tabindex="-1">
+        <h2 class="section__heading">Join the <span class="text-highlight">Launcher</span> community</h2>
+        <p class="section__lead">
+          Share feedback, request device support, and collaborate on new experiences. Launcher thrives thanks to contributions from builders around the world.
+        </p>
+        <div class="grid grid--two">
+          <article class="card">
+            <h3 class="card__title">Documentation &amp; updates</h3>
+            <p class="card__description">Follow releases, changelogs, and implementation notes on GitHub.</p>
+            <div class="card__actions">
+              <a class="button button--ghost" href="https://github.com/bmorcelli/Launcher">Visit GitHub</a>
+            </div>
+          </article>
+          <article class="card">
+            <h3 class="card__title">Join our Discord channel</h3>
+            <p class="card__description">Join our server to follow the development, integrations, efforts, latest news.</p>
+            <div class="card__actions">
+              <a class="button button--ghost" href="https://discord.gg/BE9by2a2FF">Discord Channel</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="footer__inner">
+        <p>Launcher Project - Open tooling for ESP32 ecosystems.</p>
+        <p>&copy; <span data-year></span> Launcher. Built with care for makers everywhere.</p>
+      </div>
+    </footer>
+    <script type="module" src="assets/js/main.js"></script>
+  </body>
+</html>

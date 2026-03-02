@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Launcher firmware catalog with direct download links." />
+    <meta name="color-scheme" content="dark" />
+    <title>Launcher Firmware Catalog</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+  </head>
+  <body class="page-catalog">
+    <header>
+      <div class="navbar">
+        <div class="brand">
+          <p class="brand__title">Launcher Firmware Catalog</p>
+          <p class="brand__subtitle">Discover firmwares across M5Stack, LilyGO, and ESP32 devices</p>
+        </div>
+        <button
+          class="navbar__toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+          data-nav-toggle
+        >
+          Menu
+        </button>
+        <nav class="navbar__menu" id="site-navigation" data-nav tabindex="-1">
+          <ul class="navbar__list">
+            <li><a class="navbar__link" href="index.html">Home</a></li>
+            <li><a class="navbar__link" href="webflasher.html">Web Flasher</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="hero hero--compact" tabindex="-1">
+        <h1 class="hero__title">Firmware Catalog</h1>
+        <p class="hero__description">
+          Browse the official M5Burner feed with enhanced filtering, version selection, and direct downloads.
+          Search by device, author, or category—or jump to the Web Flasher for a guided experience.
+        </p>
+        <div class="tile">
+          <span class="tile__label">Catalog status</span>
+          <span class="tile__value" data-catalog-count>Loading…</span>
+        </div>
+      </section>
+
+      <section class="section section--compact" tabindex="-1">
+        <h2 class="section__heading">Filter and explore</h2>
+        <p class="section__lead">Refine the list and download the exact build you need in just a few clicks.</p>
+        <div class="catalog">
+          <div class="catalog__controls">
+            <input
+              class="catalog__search"
+              type="search"
+              placeholder="Search by device, author, or tag"
+              aria-label="Search firmware"
+              data-catalog-search
+            />
+            <select class="catalog__search" data-catalog-category aria-label="Filter by category">
+              <option value="all">All categories</option>
+            </select>
+            <select class="catalog__search catalog__search--order" data-catalog-order aria-label="Order by">
+              <option value="downloads">Order by downloads</option>
+              <option value="name">Order by name</option>
+              <option value="published_at">Order by latest version date</option>
+            </select>
+            <a class="button button--ghost" href="webflasher.html">Open Web Flasher</a>
+          </div>
+          <p class="card__description" data-catalog-status></p>
+          <div class="catalog__list" data-catalog-list></div>
+          <p class="catalog__empty" data-catalog-empty hidden>No firmware matches your filters yet.</p>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="footer__inner">
+        <p>&copy; <span data-year></span> Launcher Project.</p>
+        <p>Data provided by the M5Burner firmware API.</p>
+      </div>
+    </footer>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/catalog.js"></script>
+  </body>
+</html>
