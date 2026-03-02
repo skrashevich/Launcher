@@ -128,7 +128,6 @@
       steps:
         - uses: actions/checkout@v4
           with:
-            ref: WebPage
             fetch-depth: 1
 
         - name: Download all artifacts
@@ -240,13 +239,13 @@
             make_latest: false
             generate_release_notes: false
 
-        - name: Trigger WebPage deploy (workflow_dispatch)
+        - name: Trigger deploy workflow (workflow_dispatch)
           if: ${{ success() }}
           env:
             GH_TOKEN: ${{ github.token }}
           run: |
             gh workflow list
-            gh workflow run .github/workflows/deploy.yml --ref WebPage
+            gh workflow run .github/workflows/deploy.yml --ref main
 
     create_release:
       runs-on: ubuntu-latest
