@@ -117,6 +117,21 @@ bool setWifiCredential(const String &ssidValue, const String &passwordValue, boo
     return true;
 }
 
+void setApiHost() {
+    String customLabel = "Custom (" + launcher_api_host + ")";
+    options = {
+        {"launcherhub.svk.su",  [&]() { launcher_api_host = "launcherhub.svk.su"; }},
+        {"api.launcherhub.net", [&]() { launcher_api_host = "api.launcherhub.net"; }},
+        {customLabel.c_str(),   [&]() {
+            String newHost = keyboard(launcher_api_host, 128, "API Host:");
+            if (newHost != String(KEY_ESCAPE) && newHost.length() > 0) {
+                launcher_api_host = newHost;
+            }
+        }},
+    };
+    loopOptions(options);
+}
+
 void settings_menu() {
     options = {
 #ifndef E_PAPER_DISPLAY
@@ -190,6 +205,10 @@ void settings_menu() {
     if (MAX_FAT_vfs > 0) options.push_back({"Restore FAT Vfs", [=]() { restorePartition("vfs"); }});
     if (dev_mode) options.push_back({"Boot Animation", [=]() { initDisplayLoop(); }});
     if (dev_mode) options.push_back({"Deactivate Dev", [=]() { dev_mode = false; }});
+    options.push_back({"API Host", [=]() {
+        setApiHost();
+        saveConfigs();
+    }});
     options.push_back({"Restart", [=]() { FREE_TFT reboot(); }});
 #if defined(STICK_C_PLUS2) || defined(T_EMBED) || defined(STICK_C_PLUS) || defined(T_LORA_PAGER)
     options.push_back({"Turn-off", [=]() { powerOff(); }});
@@ -509,6 +528,7 @@ bool saveIntoNVS() {
     err |= nvsHandle->set_string("wui_usr", wui_usr.c_str());
     err |= nvsHandle->set_string("wui_pwd", wui_pwd.c_str());
     err |= nvsHandle->set_string("dwn_path", dwn_path.c_str());
+    err |= nvsHandle->set_string("api_host", launcher_api_host.c_str());
 #if defined(HEADLESS)
     // SD Pins
     err |= nvsHandle->set_item("miso", _miso);
@@ -610,6 +630,7 @@ void defaultValues() {
     wui_usr = "admin";
     wui_pwd = "launcher";
     dwn_path = "/downloads/";
+    launcher_api_host = "launcherhub.svk.su";
 #if defined(HEADLESS)
     // SD Pins
     _miso = 0;
@@ -658,6 +679,13 @@ bool getFromNVS() {
     wui_pwd = String(buffer);
     err |= nvsHandle->get_string("dwn_path", buffer, sizeof(buffer));
     dwn_path = String(buffer);
+    char hostBuffer[128] = {0};
+    esp_err_t hostErr = nvsHandle->get_string("api_host", hostBuffer, sizeof(hostBuffer));
+    if (hostErr == ESP_OK && strlen(hostBuffer) > 0) {
+        launcher_api_host = String(hostBuffer);
+    } else {
+        launcher_api_host = "launcherhub.svk.su";
+    }
     if (err != ESP_OK) {
         log_i("Failed to retrieve settings from NVS: %d\nUsing Default values", err);
         defaultValues();
@@ -853,6 +881,12 @@ void getConfigs() {
                 count++;
                 log_i("Fail");
             }
+            if (setting["api_host"].is<String>()) {
+                launcher_api_host = setting["api_host"].as<String>();
+            } else {
+                count++;
+                log_i("Fail");
+            }
             if (!setting["wifi"].is<JsonArray>()) {
                 ++count;
                 log_i("Fail");
@@ -952,6 +986,7 @@ void saveConfigs() {
         setting["wui_usr"] = wui_usr;
         setting["wui_pwd"] = wui_pwd;
         setting["dwn_path"] = dwn_path;
+        setting["api_host"] = launcher_api_host;
 
         File file = SDM.open(CONFIG_FILE, FILE_WRITE, true);
         if (!file) {
