@@ -209,71 +209,68 @@ bool runOnce = false;
 void handleUpload(
     AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final
 ) {
-    // make sure authenticated before allowing upload
-    // Serial.println("Folder: " + uploadFolder);
     if (uploadFolder == "/") uploadFolder = "";
 
-    if (checkUserWebAuth(request)) {
-        if (!index || runOnce) {
-            if (!update) {
-                // Verifica se é um upload de pasta
-                Serial.println("File: " + uploadFolder + "/" + filename);
-                String relativePath = filename;
-                String fullPath = uploadFolder + "/" + relativePath;
-                // Cria diretórios necessários
-                String dirPath = fullPath.substring(0, fullPath.lastIndexOf("/"));
-                if (dirPath.length() > 0) { createDirRecursive(dirPath); }
-            // Upload de arquivo único
-            TRY_AGAIN:
-                request->_tempFile = SDM.open(uploadFolder + "/" + filename, "w");
-                if (!request->_tempFile) {
-                    Serial.println("Fail creating file: " + String(filename));
-                    vTaskDelay(5 / portTICK_PERIOD_MS);
-                    goto TRY_AGAIN;
-                }
-            } else {
-                runOnce = false;
-                // open the file on first call and store the file handle in the request object
-                if (Update.begin(file_size, command)) {
-                    if (command == 0) prog_handler = 0;
-                    else prog_handler = 1;
+    // Only check auth and initialize on first chunk
+    if (!index) {
+        if (!checkUserWebAuth(request)) return;
 
-                    progressHandler(0, 500);
-                    Update.onProgress(progressHandler);
-                } else {
-                    displayRedStripe("FAIL 160: " + String(Update.getError()));
-                    delay(3000);
-                }
+        // Clear stale OTA state to prevent file re-open on every chunk
+        runOnce = false;
+
+        if (!update) {
+            Serial.println("File: " + uploadFolder + "/" + filename);
+            String relativePath = filename;
+            String fullPath = uploadFolder + "/" + relativePath;
+            String dirPath = fullPath.substring(0, fullPath.lastIndexOf("/"));
+            if (dirPath.length() > 0) { createDirRecursive(dirPath); }
+
+            request->_tempFile = SDM.open(uploadFolder + "/" + filename, "w");
+            if (!request->_tempFile) {
+                Serial.println("Fail creating file: " + String(filename));
+            }
+        } else {
+            if (Update.begin(file_size, command)) {
+                if (command == 0) prog_handler = 0;
+                else prog_handler = 1;
+
+                progressHandler(0, 500);
+                Update.onProgress(progressHandler);
+            } else {
+                displayRedStripe("FAIL 160: " + String(Update.getError()));
+                delay(3000);
             }
         }
+    }
 
-        if (len) {
-            // stream the incoming chunk to the opened file
-            if (!update) {
-                request->_tempFile.write(data, len);
-            } else {
-                if (!Update.write(data, len)) displayRedStripe("FAIL 170");
+    if (len) {
+        if (!update) {
+            if (request->_tempFile) {
+                size_t written = request->_tempFile.write(data, len);
+                if (written != len) {
+                    Serial.printf("SD write error: %u/%u bytes at offset %u\n", written, len, index);
+                }
             }
+        } else {
+            if (!Update.write(data, len)) displayRedStripe("FAIL 170");
         }
+    }
 
-        if (final) {
-            if (!update) {
-                // close the file handle as the upload is now done
+    if (final) {
+        if (!update) {
+            if (request->_tempFile) {
                 request->_tempFile.close();
-                request->redirect("/");
+            }
+            // Response is sent by the POST "/" route handler, not here
+        } else {
+            if (!Update.end()) {
+                displayRedStripe("Fail 181: " + String(Update.getError()));
+                delay(3000);
             } else {
-
-                if (!Update.end()) {
-                    displayRedStripe("Fail 181: " + String(Update.getError()));
-                    delay(3000);
-                } else {
-                    request->send(200, "text/plain", "OK");
-                    displayRedStripe("Restart your device");
-                }
+                request->send(200, "text/plain", "OK");
+                displayRedStripe("Restart your device");
             }
         }
-    } else {
-        return request->requestAuthentication();
     }
 }
 
@@ -402,8 +399,12 @@ void configureWebServer() {
             }
         }
     });
-    // run handleUpload function when any file is uploaded
-    server->onFileUpload(handleUpload);
+    // handle file uploads via POST to "/"
+    server->on("/", HTTP_POST, [](AsyncWebServerRequest *request) {
+        if (checkUserWebAuth(request)) {
+            request->redirect("/");
+        }
+    }, handleUpload);
 
     server->on("/scripts.js", HTTP_GET, [](AsyncWebServerRequest *request) {
         serveWebUIFile(request, "scripts.js", "application/javascript", true, scripts_js, scripts_js_size);
